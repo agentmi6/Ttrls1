@@ -1,0 +1,33 @@
+﻿@model IEnumerable<OnlineTuts.Models.Tutorial>
+
+<div class="jumbotron">
+    <h1>Online Tuts</h1>
+    <p class="lead">Learn something new.</p>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 tutorial">
+            <div class="tutorial-item">
+                <p>
+                    <a href="@Url.Action("Details","Tutorials", new { id = item.TutorialID})">
+                        <img src="~/Content/images/tutorial.jpg" alt="Everything Is AWESOME" width="250" height="200">
+                    </a>
+                </p>
+                <div class="tutorial-item-main">
+                    <h4 class="text-success">@item.Category.CategoryName</h4>
+                    <p><strong>@item.Name</strong></p>
+                </div>
+                <ul class="list-inline info-list">
+                    <li class="text-info">@Html.ActionLink(item.ApplicationUser.UserName, "UserProfile", "Manage", new { id = item.ApplicationUserID }, null)</li>
+                    <li class="text-muted"><h6>@item.DateCreated</h6></li>
+                </ul>
+            </div>
+        </div>
+
+    }
+
+
+</div>
+

@@ -1,0 +1,73 @@
+﻿@model OnlineTuts.Models.UserSubscriptionsViewModel
+
+
+@{
+    var tutorials = Model._TutorialsBySubscriber.Where(x => x.DateCreated.Date == DateTime.Today.Date).Count();
+    DateTime lastMonth = DateTime.Now;
+    DateTime currentMonth = DateTime.Now;
+
+    lastMonth = lastMonth.AddMonths(-1);
+    int _lastMonth = lastMonth.Month;
+
+    int _currentMonth = currentMonth.Month;
+
+}
+<script src="~/Scripts/titleshort.js"></script>
+<div class="col-md-12 subscriptions-today" style="border-bottom:1px solid #446e9b;">
+    <div class="subs-period col-md-12">
+        <h4 class="text-primary">Today</h4>
+    </div>
+
+    <div class="subs-items col-md-12">
+        <ul class="col-md-12 list-unstyled">
+            @foreach (var sub in Model._subscriptions.Where(x => x.ApplicationUserID == ViewBag.CurrentUser))
+            {
+                foreach (var tutorial in sub.SubUser.TutorialsByUser.Where(x => x.DateCreated.Date == DateTime.Today.Date))
+                {
+                    <li class="col-md-3 subs-item">
+                        <div>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <img class="subs-thumb" src="~/Content/images/tutorial.jpg" width="226" height="134" />
+                                </li>
+                                <li>
+                                    <h5 class="subs-title">@tutorial.Name</h5>
+                                </li>
+                                <li>
+                                    <h6 class="subs-author">@tutorial.ApplicationUser.UserName</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="col-md-12 subscriptions-month">
+    <div class="subs-period col-md-12">
+        <h4 class="text-primary">Last month</h4>
+    </div>
+    <div class="subs-items col-md-12">
+        <ul class="col-md-12 list-unstyled">
+            @foreach (var sub in Model._subscriptions.Where(x => x.ApplicationUserID == ViewBag.CurrentUser))
+            {
+                foreach (var tutorial in sub.SubUser.TutorialsByUser.Where(x => x.DateCreated.Month == _lastMonth))
+                {
+                    <li class="col-md-3 subs-item">
+                        <div>
+                            <img src="~/Content/images/tutorial.jpg" width="226" height="134" />
+                            <h5>
+                                <a class="subs-title" href="@Url.Action("Details","Tutorials", new { id = tutorial.TutorialID })">@tutorial.Name</a>                               
+                            </h5>
+                            <h6 class="subs-author">
+                                @tutorial.ApplicationUser.UserName
+                            </h6>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>

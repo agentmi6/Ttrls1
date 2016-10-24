@@ -1,0 +1,11 @@
+﻿@model OnlineTuts.Models.UserSubscriptionsViewModel
+
+<div class="row">
+    @foreach (var sub in Model._subscriptions.Where(x => x.ApplicationUserID == ViewBag.CurrentUser))
+    {
+        foreach (var tut in sub.SubUser.TutorialsByUser)
+        {
+            <p>@tut.Name</p>
+        }
+    }
+</div>

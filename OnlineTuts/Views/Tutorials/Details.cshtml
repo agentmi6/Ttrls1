@@ -1,0 +1,147 @@
+﻿@model OnlineTuts.Models.UserVideoCommentViewModel
+@using OnlineTuts.Models
+@using Microsoft.AspNet.Identity
+
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="video embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" id="ytplayer" type="text/html" width="1124" height="590"
+                        src="https://www.youtube.com/embed/@Model._tutorial.VideoUrl"
+                        frameborder="0" allowfullscreen="1"></iframe>
+            </div>
+            <div class="video-info well">
+                <div class="video-title">
+                    <h4><strong>@Model._tutorial.Name</strong></h4>
+                </div>
+                <div class="video-userinfo">
+                    <a href="@Url.Action("UserProfile","UserManagement", new { name = ViewBag.UserName })" class="user-img">
+                        <img src="@Url.Content(Model._tutorial.ApplicationUser.ProfileAvatar)" alt="" width="50" height="50" />
+                    </a>
+
+                    <a href="@Url.Action("UserProfile","UserManagement", new { name = ViewBag.UserName })" id="video-userinfo-name">
+                        <span><strong>@Model._tutorial.ApplicationUser.UserName</strong></span>
+                    </a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var db = new ApplicationDbContext();
+                        var currentUser = User.Identity.GetUserId();
+                        var subUser = db.Users.Find(Model._tutorial.ApplicationUserID);
+                        var isSubscribed = db.Subs.Where(x => x.ApplicationUserID == currentUser).Any(x => x.SubUserID == subUser.Id);
+
+                        if (isSubscribed)
+                        {
+                            <span id="addSub">
+                                @Ajax.ActionLink(" Unsubscribe", "Unsubscribe", "UserManagement", new { name = ViewBag.UserName }, new AjaxOptions() { UpdateTargetId = "addSub", HttpMethod = "POST", InsertionMode = InsertionMode.ReplaceWith }, new { @id = "video-userinfo-unsubscribe", @class = "sub-btn fa fa-user-times toUnsubscribe", @data_toggle = "tooltip", @data_placement = "top", @title = "Unsubscribe from user" })
+                            </span>
+                        }
+                        else
+                        {
+                            <span id="addSub">
+                                @Ajax.ActionLink(" Subscribe", "Subscribe", "UserManagement", new { name = ViewBag.UserName }, new AjaxOptions() { UpdateTargetId = "addSub", HttpMethod = "POST", InsertionMode = InsertionMode.ReplaceWith }, new { @id = "video-userinfo-subscribe", @class = "sub-btn fa fa-user-plus toSubscribe", @data_toggle = "tooltip", @data_placement = "top", @title = "Subscribe to user" })
+                            </span>
+                        }
+                    }
+                </div>
+
+
+                <hr class="lowerbtns" />
+                <div class="addToPlaylist">
+                    <div class="fav">
+                        @*<span><i class="fa fa-plus-square-o"></i> add to favorites</span>*@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var db = new ApplicationDbContext();
+                            var currentUser = User.Identity.GetUserId();
+                            var tutorial = db.Tutorials.Find(Model._tutorial.TutorialID);
+
+                            var isFavorite = db.Favorites.Where(x => x.ApplicationUserID == currentUser).Any(x => x.TutorialID == tutorial.TutorialID);
+
+                            if (isFavorite)
+                            {
+                                <span id="addToFavs">
+                                    @Ajax.ActionLink(" Remove from favorites", "RemoveFromFavorites", "UserManagement", new { id = ViewBag.TutorialID }, new AjaxOptions() { UpdateTargetId = "addToFavs", HttpMethod = "POST", InsertionMode = InsertionMode.ReplaceWith }, new { @class = "fa fa-minus-square-o", @data_toggle = "tooltip", @data_placement = "top", @title = "Remove from favorites" })
+                                </span>
+                            }
+                            else
+                            {
+                                <span id="addToFavs">
+                                    @Ajax.ActionLink(" Add to favorites", "AddToFavorites", "UserManagement", new { id = ViewBag.TutorialID }, new AjaxOptions() { UpdateTargetId = "addToFavs", HttpMethod = "POST", InsertionMode = InsertionMode.ReplaceWith }, new { @class = "fa fa-plus-square-o", @data_toggle = "tooltip", @data_placement = "top", @title = "Add to favorites" })
+                                </span>
+                            }
+                        }
+                    </div>
+                    <div class="addList">
+                        <a class="fa fa-plus" id="addToListBtn">
+                            Add to
+                        </a>
+                        <div class="playlists">
+                            <div class="container">
+                                <div class="row">
+                                    <h5 style="padding-left:10px;">Add to</h5>
+                                    <div class="ddmenu" style="padding-left:15px;">
+                                        <p>#1 list</p>
+                                        <p>#2 list</p>
+                                        <p>#3 list</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="description-info well">
+                <div><h4>Published on @Model._tutorial.DateCreated</h4></div>
+                <div>@Model._tutorial.ShortDescription</div>
+                <div>Category: @Model._tutorial.Category.CategoryName</div>
+                <hr />
+                <p>
+                    <a data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" class="collapsed" id="show-more">
+                        <span id="summary" style="margin-left:45%;">Show More</span>
+                    </a>
+                </p>
+                <div class="collapse desc" id="collapseExample">
+                    <div class="card card-block">
+                        @Model._tutorial.Description
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="well postComment">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="widget-area no-padding blank">
+                                <div class="status-upload">
+                                    @using (Ajax.BeginForm("Details", new { id = ViewBag.TutorialID }, new AjaxOptions { UpdateTargetId = "comments", HttpMethod = "POST" }))
+                                    {
+                                        @Html.TextAreaFor(model => model._comment.CommentBody, new { @class = "commentBody", @placeholder = "Add comment..." })
+                                        <button type="submit" class="btn btn-success green postBtn" disabled="disabled"><i class="fa fa-share"></i> Post Comment</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <h3 class="text-info">You need to be logged in to comment...</h3>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="well commentSection">
+                <div class="row">
+                    <div id="comments">
+                        @{
+                            Html.RenderPartial("_CommentPartialView", Model);
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

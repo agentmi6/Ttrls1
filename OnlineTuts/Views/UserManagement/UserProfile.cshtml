@@ -1,0 +1,97 @@
+﻿@model OnlineTuts.Models.ProfileViewModel
+@using OnlineTuts.Models
+
+<div class="row">
+    <div class="col-md-5 profile-img">
+        <img src="@Model._user.ProfileAvatar" alt="Alternate Text" />
+    </div>
+    <div class="col-md-3">
+        <h3>Name: @Model._user.UserName</h3>
+    </div>
+</div>
+
+<div id="exTab2">
+    <ul class="nav nav-tabs user-tabs">
+        <li class="active">
+            <a href="#1" data-toggle="tab">Uploads <span class="badge"> @Model._tutorials.Count()</span></a>
+        </li>
+        <li>
+            <a href="#2" data-toggle="tab">Subscriptions <span class="badge">@Model._subs.Count()</span></a>
+        </li>
+        <li>
+            <a href="#3" data-toggle="tab">Favorites <span class="badge">@Model._user.FavoritesByUser.Count()</span></a>
+        </li>
+        <li>
+            <a href="#4" data-toggle="tab">Comments <span class="badge">@Model._user.CommentsByUser.Count()</span></a>
+        </li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="1">
+            <div class="row">
+                <div class="uploads">
+                    @foreach (var item in Model._tutorials)
+                    {
+                        <div class="col-md-3">
+                            <p></p>
+                            <p>
+                                <a href="@Url.Action("Details","Tutorials", new { id = item.TutorialID})">
+                                    <img src="~/Content/images/tutorial.jpg" alt="Everything Is AWESOME" width="250" height="200">
+                                </a>
+                            </p>
+                            <p>
+                                @item.Name
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="2">
+            <div class="row">
+                <div class="subs">
+                    @foreach (var sub in Model._subs)
+                    {
+                        <div class="sub-item">
+                            <img src="@sub.SubUser.ProfileAvatar" alt="Alternate Text" width="45" height="45" />
+                            <p>@sub.SubName</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="3">
+            <h3>User favorites</h3>
+        </div>
+        <div class="tab-pane" id="4">
+            <table class="table profile-comments">
+                <tr>
+                    <th>
+                        @Html.DisplayName("Tutorial Name")
+                    </th>                   
+                    <th>
+                        @Html.DisplayName("Date Posted")
+                    </th>
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model._comments)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Tutorial.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CommentDateCreated)
+                        </td>
+                        <td>
+                            @*@Html.ActionLink("Detailed View", "Details", "Tutorials", new { id = item.TutorialID }, new { @class = "btn btn-sm btn-info btn-block" })*@
+                            @Html.ActionLink("Detailed View", "Details", "Tutorials", protocol: null, hostName: null, fragment: @item.CommentID.ToString(), routeValues: new { id = item.TutorialID }, htmlAttributes: new { @class = "btn btn-sm btn-info btn-block" })
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>

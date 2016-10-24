@@ -1,0 +1,8 @@
+﻿<script type="text/javascript">
+    $(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<span id="addToFavs">
+    @Ajax.ActionLink(" Add to favorites", "AddToFavorites", "UserManagement", new { id = ViewBag.TutorialID }, new AjaxOptions() { UpdateTargetId = "addToFavs", HttpMethod = "POST", InsertionMode = InsertionMode.ReplaceWith }, new { @class = "fa fa-plus-square-o", @data_toggle = "tooltip", @data_placement = "top", @title = "Add to favorites" })
+</span>

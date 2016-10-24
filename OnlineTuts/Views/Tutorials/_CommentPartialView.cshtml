@@ -1,0 +1,40 @@
+﻿@model OnlineTuts.Models.UserVideoCommentViewModel
+@using OnlineTuts.Models
+@using Microsoft.AspNet.Identity
+
+@{
+    //db.Tutorials.Where(x => x.TutorialID == id).Any(x => x.Comments.Count > 0)
+    int id = ViewBag.TutorialID;
+    var currentUserID = User.Identity.GetUserId();    
+}
+
+@using (ApplicationDbContext db = new ApplicationDbContext())
+{
+    foreach (var tutorial in Model._Tutorials.Where(x=>x.TutorialID == id))
+    {
+        if (tutorial.Comments != null && tutorial.Comments.Any())
+        {
+            foreach (var comment in tutorial.Comments.OrderByDescending(x=>x.CommentDateCreated))
+            {
+                <div class="col-sm-6" id="@comment.CommentID">                    
+                    <div id="tb-testimonial" class="testimonial testimonial-default">
+                        <div class="testimonial-section">
+                            @comment.CommentBody
+                        </div>
+                        <div class="testimonial-desc">
+                            <img src="@Url.Content(comment.ApplicationUser.ProfileAvatar)" alt="" />
+                            <div class="testimonial-writer">
+                                <div class="testimonial-writer-name">@comment.ApplicationUser.UserName</div>
+                                <div class="testimonial-writer-designation">@comment.CommentDateCreated</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h3 class="text-danger text-center">No comments yet</h3>
+        }
+    }
+}

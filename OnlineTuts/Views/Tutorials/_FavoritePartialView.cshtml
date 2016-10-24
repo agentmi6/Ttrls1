@@ -1,0 +1,48 @@
+﻿@model IEnumerable<OnlineTuts.Models.Favorites>
+
+@{
+    var i = 0;    
+}
+    <script type="text/javascript">        
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $(".fav-remove").on("click", function () {
+                $(this).parent().parent().fadeOut(300);
+            });
+
+            $(".fav-tutorial").hover(function () {
+                $(this).children(":nth-child(4)").children("div:first").toggle();
+            });
+        });        
+    </script>
+<div class="content">
+    <div class="row">
+        <table class="table">
+            <tbody id="tableBody">
+                @foreach (var item in Model)
+                {
+                    <tr class="fav-tutorial">
+                        <th scope="row">@(++i)</th>
+                        <td class="fav-tutorial-thumbnail">
+                            <img src="~/Content/images/tutorial.jpg" alt="tutorial image" width="90" height="55">
+                        </td>
+                        <td class="fav-tutorial-info">
+                            <div class="fav-tutorial-title">@item.Tutorial.Name</div>
+                            <div class="fav-tutorial-author">by @item.Tutorial.ApplicationUser.UserName</div>
+                        </td>
+                        <td class="fav-tutorial-remove">
+                            <div class="fav-remove">
+                                @Ajax.ActionLink("remove", "RemoveFavorite", "Tutorials", new { id = item.FavID }, new AjaxOptions { HttpMethod = "POST" }, new { @class = "text-danger fa fa-times"})
+                                @*<span id="@item.FavID" class="warning glyphicon glyphicon-remove" data-placement="right" data-toggle="tooltip" title="Remove tutorial"></span>*@
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+

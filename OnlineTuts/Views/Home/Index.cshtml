@@ -1,0 +1,44 @@
+﻿@*@model IEnumerable<OnlineTuts.Models.Tutorial>*@
+@model PagedList.IPagedList<OnlineTuts.Models.Tutorial>
+@using PagedList;
+@using PagedList.Mvc;
+
+
+<div class="row base">   
+
+    <div class="row well" id="main-content">
+        <div class="col-lg-12 col-md-10">
+            <h4 class="text-primary">Tutorials</h4>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-5 tutorial">
+                <div class="tutorial-item">
+                    <p>
+                        <a href="@Url.Action("Details","Tutorials", new { id = item.TutorialID})">
+                            <img src="~/Content/images/tutorial.jpg" class="img-responsive" alt="Everything Is AWESOME" width="250" height="200">
+                        </a>
+                    </p>
+                    <div class="tutorial-item-main">
+                        <h4>@Html.ActionLink(item.Category.CategoryName, "Category", new { id = item.Category.CategoryID }, new { @class = "text-success" })</h4>
+                        <p><strong>@item.Name</strong></p>
+                    </div>
+                    <ul class="list-inline info-list">
+                        <li class="text-info">@Html.ActionLink(item.ApplicationUser.UserName, "UserProfile", "UserManagement", new { name = item.ApplicationUser.UserName }, null)</li>
+                        <li class="text-muted"><h6>@item.DateCreated</h6></li>
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <div class="pager col-md-12">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), PagedListRenderOptions.PageNumbersOnly)
+        </div>
+    </div>
+</div>
+
+
+
+@*<div class="pager">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), PagedListRenderOptions.PageNumbersOnly)
+</div>*@
